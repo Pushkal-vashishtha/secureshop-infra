@@ -4,10 +4,10 @@ module "vpc" {
 
   name = "secureshop-lite"
   cidr = "10.30.0.0/16"
-  azs  = ["ap-south-1a", "ap-south-1b"]
+  azs  = ["ap-south-1a", "ap-south-1b", "ap-south-1c"]
 
-  public_subnets               = ["10.30.1.0/24"]                   # lab box only
-  database_subnets             = ["10.30.21.0/24", "10.30.22.0/24"] # RDS needs two AZs
+  public_subnets               = ["10.30.1.0/24"]                                    # lab box only
+  database_subnets             = ["10.30.21.0/24", "10.30.22.0/24", "10.30.23.0/24"] # RDS needs two AZs
   create_database_subnet_group = true
 
   enable_nat_gateway      = false # the big saving
