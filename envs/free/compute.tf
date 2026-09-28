@@ -62,6 +62,6 @@ resource "aws_instance" "lab" {
     encrypted   = true
   }
 
-  user_data = replace(file("${path.module}/k3s-bootstrap.sh"), "\r\n", "\n")
+  user_data = trimspace(replace(file("${path.module}/k3s-bootstrap.sh"), "\r\n", "\n"))
   tags      = { Name = "secureshop-lab", Owner = "pushkal" }
 }
