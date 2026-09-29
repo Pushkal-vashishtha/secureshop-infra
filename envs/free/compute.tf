@@ -44,6 +44,8 @@ resource "aws_iam_instance_profile" "lab" {
 }
 
 resource "aws_instance" "lab" {
+  #checkov:skip=CKV_AWS_126:Detailed monitoring costs extra; basic 5-minute metrics are enough for the lab
+  #checkov:skip=CKV_AWS_135:m7i-flex is EBS-optimized by default on Nitro; setting the flag forces instance replacement
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = var.lab_instance_type
   subnet_id              = module.vpc.public_subnets[0]

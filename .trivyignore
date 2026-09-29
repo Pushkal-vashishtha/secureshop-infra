@@ -1,0 +1,6 @@
+# Lab box lives in a public subnet by design until SSM replaces SSH (Day 19)
+AVD-AWS-0164
+AWS-0164
+# Box needs outbound internet for apt, GitHub and registries; no egress proxy on the free path
+AVD-AWS-0104
+AWS-0104

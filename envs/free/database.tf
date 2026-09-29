@@ -10,6 +10,11 @@ resource "aws_db_parameter_group" "pg" {
 }
 
 resource "aws_db_instance" "db" {
+  #checkov:skip=CKV_AWS_157:Multi-AZ doubles cost; single-AZ accepted for the lab
+  #checkov:skip=CKV_AWS_293:Lab must be destroyable; enable deletion protection in production
+  #checkov:skip=CKV_AWS_118:Enhanced monitoring needs an extra IAM role and costs extra; basic metrics suffice
+  #checkov:skip=CKV_AWS_353:Performance Insights not needed for the lab workload
+  #checkov:skip=CKV_AWS_129:Log export deferred to Day 18 when the log pipeline exists
   identifier        = "secureshop-db"
   engine            = "postgres"
   engine_version    = "18"
@@ -20,9 +25,10 @@ resource "aws_db_instance" "db" {
   storage_type      = "gp3"
   storage_encrypted = true
 
-  db_name                     = "secureshop"
-  username                    = "db_admin"
-  manage_master_user_password = true
+  db_name                             = "secureshop"
+  username                            = "db_admin"
+  manage_master_user_password         = true
+  iam_database_authentication_enabled = true
 
   publicly_accessible    = false
   multi_az               = false
@@ -31,9 +37,11 @@ resource "aws_db_instance" "db" {
   parameter_group_name   = aws_db_parameter_group.pg.name
 
   backup_retention_period    = 1
+  copy_tags_to_snapshot      = true
   auto_minor_version_upgrade = true
   deletion_protection        = false
   skip_final_snapshot        = true
+  apply_immediately          = true
 
   tags = { Name = "secureshop-db", Tier = "data" }
 }

@@ -1,13 +1,14 @@
 module "vpc" {
+  #checkov:skip=CKV_TF_1:Registry module pinned to an exact version instead of a commit hash
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 6.0"
+  version = "6.7.3"
 
   name = "secureshop-lite"
   cidr = "10.30.0.0/16"
   azs  = ["ap-south-1a", "ap-south-1b", "ap-south-1c"]
 
   public_subnets               = ["10.30.1.0/24"]                                    # lab box only
-  database_subnets             = ["10.30.21.0/24", "10.30.22.0/24", "10.30.23.0/24"] # RDS needs two AZs
+  database_subnets             = ["10.30.21.0/24", "10.30.22.0/24", "10.30.23.0/24"] # RDS, 3 AZs for capacity
   create_database_subnet_group = true
 
   enable_nat_gateway      = false # the big saving
@@ -16,6 +17,9 @@ module "vpc" {
 }
 
 resource "aws_security_group" "lab" {
+  #checkov:skip=CKV_AWS_260:Port 80 needed for LetsEncrypt HTTP-01 challenge and HTTPS redirect
+  #checkov:skip=CKV_AWS_382:Box needs outbound internet for apt, GitHub and registries; no egress proxy on the free path
+  #checkov:skip=CKV_AWS_23:Changing the SG-level description forces replacement of an in-use SG; set it at the Day 14 rebuild
   name   = "secureshop-lab"
   vpc_id = module.vpc.vpc_id
 
@@ -34,13 +38,14 @@ resource "aws_security_group" "lab" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
-    description = "HTTP for Lets Encrypt challenge and redirect"
+    description = "HTTP for LetsEncrypt challenge and redirect"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
   egress {
+    description = "All outbound for apt, GitHub and container registries"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -49,6 +54,7 @@ resource "aws_security_group" "lab" {
 }
 
 resource "aws_security_group" "db" {
+  #checkov:skip=CKV_AWS_23:Changing the SG-level description forces replacement of an in-use SG; set it at the Day 14 rebuild
   name   = "secureshop-db"
   vpc_id = module.vpc.vpc_id
 
