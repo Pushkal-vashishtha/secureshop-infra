@@ -19,3 +19,9 @@
 - Worked: FastAPI app tier (Chainguard, no shell, uid 65532) and Nginx web tier (uid 101), both read-only with all capabilities dropped; base images pinned by digest; schema in Git; full chain web -> api -> RDS working with password from Parameter Store via the instance role.
 - Proved: read-only FS, no shell, 422 on bad input, 403 on DELETE, generic 503 to users with the real reason logged.
 - Broke: RDS start ran on the box (AccessDenied) and with expired exported creds; ~/.aws/config overwritten with unrelated notes; aws login 400 from a stale browser session.
+
+## Day 6
+- Worked: Semgrep (+ custom CWE-89 rule, proven both ways), Trivy fs + Grype (0 vulns in deps), image scans, Syft SBOMs (CycloneDX + SPDX), SonarQube Cloud (gate passed, all A), Dependabot on both repos.
+- Fixed: explicit USER; pip removed from runtime (api 6 HIGH -> 0, 183 -> 154 MB); hash-locked deps + --only-binary; Error-based promise rejection.
+- Accepted: pcre2 CVE in nginx base, time-boxed to 2026-10-17 (not reachable, EPSS 0.2%).
+- Learned: image scans see what SCA can't; scanners disagree; exceptions don't travel between tools; severity vs EPSS.
