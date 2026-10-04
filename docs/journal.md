@@ -25,3 +25,9 @@
 - Fixed: explicit USER; pip removed from runtime (api 6 HIGH -> 0, 183 -> 154 MB); hash-locked deps + --only-binary; Error-based promise rejection.
 - Accepted: pcre2 CVE in nginx base, time-boxed to 2026-10-17 (not reachable, EPSS 0.2%).
 - Learned: image scans see what SCA can't; scanners disagree; exceptions don't travel between tools; severity vs EPSS.
+
+## Day 7
+- Worked: app-ci pipeline (secrets, SAST, SCA, image scan gate, push to GHCR by commit SHA); images public on GHCR; protect-main ruleset on the app repo with 5 required checks.
+- Fixed: SonarQube gate failed on unpinned actions -> pinned all actions to commit SHAs and scanner images to digests.
+- Proved (red team): fake AWS key blocked by GitHub push protection; vulnerable PyYAML 5.3 (CVE-2020-14343) failed sca in 33s; build skipped; merge blocked.
+- Reviewed and merged 4 Dependabot PRs on infra, one at a time, each passing scan.
