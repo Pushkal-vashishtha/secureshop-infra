@@ -31,3 +31,8 @@
 - Fixed: SonarQube gate failed on unpinned actions -> pinned all actions to commit SHAs and scanner images to digests.
 - Proved (red team): fake AWS key blocked by GitHub push protection; vulnerable PyYAML 5.3 (CVE-2020-14343) failed sca in 33s; build skipped; merge blocked.
 - Reviewed and merged 4 Dependabot PRs on infra, one at a time, each passing scan.
+
+## Day 8
+- Worked: keyless Cosign signing of every image on main (Fulcio cert + Rekor log); signed CycloneDX SBOM attestation; SLSA build provenance in GitHub's attestation store; infra actions pinned to SHAs, Trivy to a digest.
+- Proved: signature and SBOM verify; wrong repo, wrong branch and unsigned images all REJECTED.
+- Broke: plan wanted to REPLACE the lab box (most_recent AMI) -> targeted SG apply + lifecycle ignore_changes [ami]; verify-attestation saw only provenance because two storage formats were mixed -> provenance kept in GitHub's store; empty DIGEST from verifying before the run finished; ! in double quotes triggered bash history expansion.
