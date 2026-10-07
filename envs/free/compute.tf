@@ -65,5 +65,9 @@ resource "aws_instance" "lab" {
   }
 
   user_data = trimspace(replace(file("${path.module}/k3s-bootstrap.sh"), "\r\n", "\n"))
-  tags      = { Name = "secureshop-lab", Owner = "pushkal" }
+
+  lifecycle {
+    ignore_changes = [ami]
+  }
+  tags = { Name = "secureshop-lab", Owner = "pushkal" }
 }
