@@ -36,3 +36,9 @@
 - Worked: keyless Cosign signing of every image on main (Fulcio cert + Rekor log); signed CycloneDX SBOM attestation; SLSA build provenance in GitHub's attestation store; infra actions pinned to SHAs, Trivy to a digest.
 - Proved: signature and SBOM verify; wrong repo, wrong branch and unsigned images all REJECTED.
 - Broke: plan wanted to REPLACE the lab box (most_recent AMI) -> targeted SG apply + lifecycle ignore_changes [ami]; verify-attestation saw only provenance because two storage formats were mixed -> provenance kept in GitHub's store; empty DIGEST from verifying before the run finished; ! in double quotes triggered bash history expansion.
+
+## Day 9
+- Worked: gitops repo (hardened manifests, dev overlay pinned to signed digests, kubeconform clean); ArgoCD via pinned Helm chart, reachable only through an SSH tunnel; AppProject fence (one repo, two namespaces, Namespace-only cluster objects); auto-sync with prune + self-heal.
+- Promote job: verifies Cosign signatures, then writes digests to gitops with a single-repo deploy key; CI never touches the cluster. Heading change went PR -> signed image -> gitops commit -> new pod.
+- Proved: AppProject blocked an empty destination namespace; self-heal reverted nginx:latest to the signed digest in ~30s (repair, not prevention).
+- Broke: wrong key files (verified by fingerprint), session key path after moving the .pem, private key fragment pasted in chat -> regenerated.
