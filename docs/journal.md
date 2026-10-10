@@ -42,3 +42,9 @@
 - Promote job: verifies Cosign signatures, then writes digests to gitops with a single-repo deploy key; CI never touches the cluster. Heading change went PR -> signed image -> gitops commit -> new pod.
 - Proved: AppProject blocked an empty destination namespace; self-heal reverted nginx:latest to the signed digest in ~30s (repair, not prevention).
 - Broke: wrong key files (verified by fingerprint), session key path after moving the .pem, private key fragment pasted in chat -> regenerated.
+
+## Day 10
+- Worked: Pod Security "restricted" enforced on web/app (root busybox pod rejected); default-deny NetworkPolicies with tier-to-tier allows; cert-manager + Let's Encrypt (staging -> trusted) on an sslip.io host, HTTPS only; ZAP baseline + API scans.
+- Proved: web->api allowed; web->internet, web->IMDS, other-namespace->api blocked. ZAP: 0 FAIL in both scans (117 API checks incl. SQLi/XSS/Log4Shell); baseline 6 WARN -> 0 after CSP, Permissions-Policy, COOP/COEP/CORP.
+- Triage: new libtiff CVE blocked the merge; base refresh fixed pcre2 (exception removed) but not libtiff -> unreachable (image-filter module not loaded), exception to 2026-10-24.
+- Broke: sed missed the kustomization after kustomize reformatted it (11 vs 12 count caught it); wrong tunnel IP; placeholder copied into tfvars.
