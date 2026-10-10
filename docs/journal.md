@@ -48,3 +48,8 @@
 - Proved: web->api allowed; web->internet, web->IMDS, other-namespace->api blocked. ZAP: 0 FAIL in both scans (117 API checks incl. SQLi/XSS/Log4Shell); baseline 6 WARN -> 0 after CSP, Permissions-Policy, COOP/COEP/CORP.
 - Triage: new libtiff CVE blocked the merge; base refresh fixed pcre2 (exception removed) but not libtiff -> unreachable (image-filter module not loaded), exception to 2026-10-24.
 - Broke: sed missed the kustomization after kustomize reformatted it (11 vs 12 count caught it); wrong tunnel IP; placeholder copied into tfvars.
+
+## Day 11
+- Worked: Gatekeeper 3.23.1 (pinned chart); 4 constraints (ghcr-only, no :latest, digest required via own Rego, tier label) rolled out dryrun -> 0 violations -> deny; ExpansionTemplate so image rules apply at the Deployment; gator offline tests; gitops-validate CI (kubeconform + gator, tools pinned by version + sha256); gitops ruleset with deploy-key bypass for promote.
+- Proved: Docker Hub image and :latest denied, digest allowed; requiredlabels enforced as a native ValidatingAdmissionPolicy; cert-manager solver excluded so renewals keep working.
+- Broke: first red-team PR passed because kustomize's images transformer restored the digest -> verify the bad input reaches the check; ran PowerShell commands on the box; init -upgrade vs init.
