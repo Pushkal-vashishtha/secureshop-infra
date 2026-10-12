@@ -53,3 +53,9 @@
 - Worked: Gatekeeper 3.23.1 (pinned chart); 4 constraints (ghcr-only, no :latest, digest required via own Rego, tier label) rolled out dryrun -> 0 violations -> deny; ExpansionTemplate so image rules apply at the Deployment; gator offline tests; gitops-validate CI (kubeconform + gator, tools pinned by version + sha256); gitops ruleset with deploy-key bypass for promote.
 - Proved: Docker Hub image and :latest denied, digest allowed; requiredlabels enforced as a native ValidatingAdmissionPolicy; cert-manager solver excluded so renewals keep working.
 - Broke: first red-team PR passed because kustomize's images transformer restored the digest -> verify the bad input reaches the check; ran PowerShell commands on the box; init -upgrade vs init.
+
+## Day 12
+- Worked: Kyverno (pinned chart, single replicas); ClusterPolicy verify-secureshop-signatures - images from ghcr.io/pushkal-vashishtha/* need a keyless Cosign signature from ci.yml@refs/heads/main (GitHub OIDC, Rekor); Audit (all PASS) -> Enforce. Read-only developer RBAC via built-in "view" on web/app, group-bound, kept in platform/.
+- Proved: pre-Day-8 unsigned image from our own registry, by digest, passes Gatekeeper but is denied by Kyverno ("no signatures found"); signed image allowed. Developer: can view pods, cannot read secrets, exec, write, or see platform namespaces.
+- Broke: k3s crash-looped 18 times right after boot (start-up race; stabilized on its own) - check the service before the pods; Gatekeeper webhook "failing open" noise; testpod lost on reconnect -> saved to ~/.bashrc.
+- Noted: Kyverno image verification fails closed, Gatekeeper fails open. ClusterPolicy is deprecated in favour of ImageValidatingPolicy - migrate later.
