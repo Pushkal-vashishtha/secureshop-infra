@@ -59,3 +59,10 @@
 - Proved: pre-Day-8 unsigned image from our own registry, by digest, passes Gatekeeper but is denied by Kyverno ("no signatures found"); signed image allowed. Developer: can view pods, cannot read secrets, exec, write, or see platform namespaces.
 - Broke: k3s crash-looped 18 times right after boot (start-up race; stabilized on its own) - check the service before the pods; Gatekeeper webhook "failing open" noise; testpod lost on reconnect -> saved to ~/.bashrc.
 - Noted: Kyverno image verification fails closed, Gatekeeper fails open. ClusterPolicy is deprecated in favour of ImageValidatingPolicy - migrate later.
+
+## Day 13
+- Scanned: kube-bench k3s-cis-1.9 -> 58 PASS / 6 FAIL / 52 WARN. Triage: web gets its own ServiceAccount, default SAs never mount tokens (fixed); argocd-redis SA queued for rebuild; cert perms (keys 600, certs public), etcd-cafile (SQLite, N/A), cluster-admin (system:masters + k3s helm installer), ArgoCD wildcard role (compensated by AppProject + Gatekeeper + Kyverno) accepted.
+- Kubescape (NSA + MITRE): live 78.59%. Fixed CPU limits, fsGroup, fsGroupChangePolicy, explicit AppArmor RuntimeDefault. Documented exception for C-0211 seLinuxOptions (Ubuntu/AppArmor). CI gate: Kubescape JSON + jq blocks high/critical findings without a documented exception (proved both ways); --severity-threshold ignores alertOnly exceptions.
+- INCIDENT: k3s crash-looped on boot (18, then 47 restarts). Root cause: Gatekeeper generated a native ValidatingAdmissionPolicy from requiredlabels' CEL block; it fails closed while its paramKind CRD isn't served, denying k3s's own CRD updates. Fix: removed only the K8sNativeValidation entry (Rego kept), via PR; verified with a reboot (NRestarts=0).
+- FINDING: gitops and infra rulesets had "require status checks" ON with an EMPTY list -> failing PRs mergeable (PR #9 was). Fixed: validate / scan, verified via the rules API.
+- Lessons: checks that pass on empty input aren't checks (wait script, kubeconform, jq //); test the control you mean (webhook order); read exit codes before pushing.
