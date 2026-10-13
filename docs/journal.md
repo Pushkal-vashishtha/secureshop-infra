@@ -66,3 +66,10 @@
 - INCIDENT: k3s crash-looped on boot (18, then 47 restarts). Root cause: Gatekeeper generated a native ValidatingAdmissionPolicy from requiredlabels' CEL block; it fails closed while its paramKind CRD isn't served, denying k3s's own CRD updates. Fix: removed only the K8sNativeValidation entry (Rego kept), via PR; verified with a reboot (NRestarts=0).
 - FINDING: gitops and infra rulesets had "require status checks" ON with an EMPTY list -> failing PRs mergeable (PR #9 was). Fixed: validate / scan, verified via the rules API.
 - Lessons: checks that pass on empty input aren't checks (wait script, kubeconform, jq //); test the control you mean (webhook order); read exit codes before pushing.
+
+## Day 14
+- Rebuilt the lab box from code: terraform -replace (only aws_instance.lab), new AMI. Recovery time 33 min to a fully secured, HTTPS-serving app.
+- Captured before destroying: pinned + checksummed toolchain script, Helm releases/values in Git, platform bootstrap script, helper scripts.
+- Came back by itself: k3s with secrets encryption + audit log (user_data); platform + policies (bootstrap.sh); app (ArgoCD). 9/9 control checks pass.
+- Rotated: SSH key (new auth + signing key, old deleted), ArgoCD admin password. Host keys verified via the EC2 console log and GitHub's published fingerprint.
+- Found by the rebuild: k3s version unpinned; pre-commit hooks not cloned; stale certificate request for the old hostname; argocd-redis pod-level token setting overrides the SA; nightly stop schedule AND its IAM role pinned to the deleted instance ID (fixed: tag-based permission, simulator-verified allowed/implicitDeny).
