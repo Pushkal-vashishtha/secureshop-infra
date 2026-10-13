@@ -18,3 +18,4 @@
 - [ ] Fixed address (Elastic IP or real DNS) to remove the hostname PR and stale-certificate steps
 - [ ] ArgoCD: named user, admin.enabled false
 - [ ] RDS auto-restarts 7 days after a stop: nightly rds:stopDBInstance schedule in Terraform, or snapshot+delete when idle
+- [ ] RDS auto-restarts 7 days after a stop: nightly rds:stopDBInstance schedule in Terraform, or snapshot+delete when idle
