@@ -88,3 +88,10 @@
 - Fixed: Nginx declares charset utf-8 (prevents charset sniffing). The "?" for the rupee sign was actually a literal "?" saved in app.js on Day 5 -> now the ASCII-safe escape \u20B9. Looked at the bytes before fixing the presentation.
 - FINDING: RDS auto-started 7 days after its last stop (2026-10-08) and ran unnoticed for 5 days. No AWS waiter exists for "stopped": poll the status instead.
 - Lessons: "Ready=True" can be true for the wrong name; "OutOfSync" for a few minutes after a commit is ArgoCD's polling interval; merge -> pipeline -> then sync.
+
+## Day 16
+- Worked: Falco 9.2.0 chart (modern eBPF driver, JSON output) in the platform bootstrap; container plugin maps events to pod/namespace (k3s containerd socket already in the chart defaults); falco namespace added to the IMDS guard.
+- Detected: terminal shell in web (Notice, MITRE T1059); /etc/shadow read (Warning); drop-and-execute of a copied binary (Critical).
+- GAP: stock shell rule needs a terminal; an RCE shell has none -> silent. Fixed with a custom rule "Shell in SecureShop workload" (Critical) for web/app; fires on `sh -c id`, quiet on a normal web restart.
+- Correlated the alert with the k3s audit log (who ran the exec); shared admin identity limits attribution -> named identities on the backlog.
+- Next: alerts only live in one pod's log -> Day 17 (notifications/metrics), Day 18 (ship logs off the box).
