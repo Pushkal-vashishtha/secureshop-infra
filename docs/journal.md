@@ -73,3 +73,10 @@
 - Came back by itself: k3s with secrets encryption + audit log (user_data); platform + policies (bootstrap.sh); app (ArgoCD). 9/9 control checks pass.
 - Rotated: SSH key (new auth + signing key, old deleted), ArgoCD admin password. Host keys verified via the EC2 console log and GitHub's published fingerprint.
 - Found by the rebuild: k3s version unpinned; pre-commit hooks not cloned; stale certificate request for the old hostname; argocd-redis pod-level token setting overrides the SA; nightly stop schedule AND its IAM role pinned to the deleted instance ID (fixed: tag-based permission, simulator-verified allowed/implicitDeny).
+
+## Day 15
+- Worked: External Secrets Operator (pinned chart, in platform bootstrap); ClusterSecretStore on Parameter Store via the instance role, usable only from namespace "app"; ExternalSecret -> Secret db-credentials; api reads DB_PASSWORD via secretKeyRef. Live read + write over HTTPS through every layer.
+- FINDING: IMDS hop limit 2 let pods in every namespace without a NetworkPolicy fetch the box role's credentials (and so the DB password). Fixed: IMDS-guard NetworkPolicies (allow all egress except 169.254.169.254) in argocd, cert-manager, gatekeeper-system, kyverno, kube-system, and external-secrets except the ESO controller. Production answer: IRSA / EKS Pod Identity.
+- Proved: guard blocks IMDS everywhere except the ESO controller (first test was a race: new pods briefly run before their policy applies). Pod spec holds only a secretKeyRef; developer can't read the Secret; plaintext absent from k3s datastore (encrypted at rest); no secret in ESO logs.
+- FINDING: RDS auto-started 7 days after its last stop (2026-10-08) and ran unnoticed for 5 days.
+- Lessons: "Ready=True" can be true for the wrong name (old certificate) - check what it's ready for; bash vs PowerShell windows.
