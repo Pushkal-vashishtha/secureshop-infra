@@ -19,3 +19,4 @@
 - [ ] ArgoCD: named user, admin.enabled false
 - [ ] RDS auto-restarts 7 days after a stop: nightly rds:stopDBInstance schedule in Terraform, or snapshot+delete when idle
 - [ ] RDS auto-restarts 7 days after a stop: nightly rds:stopDBInstance schedule in Terraform, or snapshot+delete when idle
+- [ ] Auto-generate the IMDS guard for every new namespace (Kyverno generate policy) - remembering per namespace will fail
