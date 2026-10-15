@@ -103,3 +103,11 @@
 - Security alerts: FalcoCriticalEvent, AdmissionDenied, CertificateExpiringSoon, CertificateNotReady, ExternalSecretNotSynced. First-appearance counters handled with "or ... unless ... offset". Falco + Kyverno proven by real events; cert/ESO logic proven on live data.
 - Email delivery: notifications_total{email}=1, 0 failures; received.
 - Found and fixed: monitoring namespace missing from the IMDS guard; a sed that matched nothing left bootstrap.sh unchanged; Grafana OOMKilled twice at 384Mi (used 364Mi) -> 640Mi. kubectl port-forward dies with its pod: run it in a restart loop.
+
+## Day 18
+- FINDING: k3s audit log was ~1.5 GB/day (16 x 100 MB files in 2 days), mostly controllers' watches/reads, leases, health checks, permission self-checks; no maxbackup. New audit policy (first match wins): drop probes, leases, events, SARs, system watches and routine system reads; keep every write, every human action, RBAC changes in full, every Secret/ConfigMap access (metadata only). Measured offline first (-92%), then live: ~2,000 -> 21 events/min. Applied on the box and in k3s-bootstrap.sh; k3s pinned to v1.36.5+k3s1; ignore_changes = [ami, user_data] (proven: plan with the changed script = 0 changes to the instance).
+- FINDING: the Windows infra checkout had been on a stale local branch since Day 14 - every git pull failed quietly. Fixed; routine now uses `git switch main; git pull --ff-only`.
+- CloudWatch log groups /secureshop/dev/{falco,audit,apps}, 30-day retention, Checkov skips with reasons; lab role append-only (CreateLogStream, PutLogEvents).
+- Fluent Bit 0.58.3 in the bootstrap: read-only host mounts, no RBAC, IMDS guard exception (like ESO); Falco JSON alerts only; kubelet probe lines dropped. Logs Insights: exec (who) + Falco alert (what) correlated off the box.
+- Tamper test with the box's own role: create stream OK; delete stream / delete group / shorten retention -> AccessDenied. IAM simulator wrongly showed everything denied for CloudWatch Logs resources - tested the real system instead.
+- Follow-ups: alert on silence (a log group receiving nothing); confirm the API probe filter; host root can still stop the shipper or add fake events.
