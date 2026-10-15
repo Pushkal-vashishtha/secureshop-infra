@@ -67,7 +67,9 @@ resource "aws_instance" "lab" {
   user_data = trimspace(replace(file("${path.module}/k3s-bootstrap.sh"), "\r\n", "\n"))
 
   lifecycle {
-    ignore_changes = [ami]
+    # user_data only runs at first boot: changes apply on the next -replace rebuild,
+    # and live boxes are updated by hand (see docs/rebuild-runbook.md).
+    ignore_changes = [ami, user_data]
   }
   tags = { Name = "secureshop-lab", Owner = "pushkal" }
 }
