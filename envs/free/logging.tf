@@ -3,7 +3,7 @@
 # to delete or change log groups, streams or retention: an attacker with root on
 # the box cannot erase what has already been shipped.
 resource "aws_cloudwatch_log_group" "lab" {
-  for_each          = toset(["falco", "audit", "apps"])
+  for_each          = toset(["falco", "audit", "apps", "ssm-sessions"])
   name              = "/secureshop/dev/${each.key}"
   retention_in_days = 30
   #checkov:skip=CKV_AWS_158:Encrypted at rest with AWS-owned keys by default; a customer-managed KMS key adds cost in this free-tier lab
@@ -22,4 +22,20 @@ resource "aws_iam_role_policy" "lab_logs" {
   name   = "ship-logs-append-only"
   role   = aws_iam_role.lab.id
   policy = data.aws_iam_policy_document.lab_logs.json
+}
+
+# The SSM agent checks the session log group exists before streaming to it.
+# DescribeLogGroups can't be scoped to a resource; it reveals names only.
+data "aws_iam_policy_document" "lab_ssm_logs" {
+  statement {
+    sid       = "SessionManagerChecksLogGroup"
+    actions   = ["logs:DescribeLogGroups"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "lab_ssm_logs" {
+  name   = "ssm-session-log-check"
+  role   = aws_iam_role.lab.id
+  policy = data.aws_iam_policy_document.lab_ssm_logs.json
 }
