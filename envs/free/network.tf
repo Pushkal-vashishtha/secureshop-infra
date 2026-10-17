@@ -24,13 +24,6 @@ resource "aws_security_group" "lab" {
   vpc_id = module.vpc.vpc_id
 
   ingress {
-    description = "SSH from my IP only (replace with SSM later)"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.my_ip_cidr]
-  }
-  ingress {
     description = "HTTPS for the web tier"
     from_port   = 443
     to_port     = 443
