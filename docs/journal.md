@@ -111,3 +111,10 @@
 - Fluent Bit 0.58.3 in the bootstrap: read-only host mounts, no RBAC, IMDS guard exception (like ESO); Falco JSON alerts only; kubelet probe lines dropped. Logs Insights: exec (who) + Falco alert (what) correlated off the box.
 - Tamper test with the box's own role: create stream OK; delete stream / delete group / shorten retention -> AccessDenied. IAM simulator wrongly showed everything denied for CloudWatch Logs resources - tested the real system instead.
 - Follow-ups: alert on silence (a log group receiving nothing); confirm the API probe filter; host root can still stop the shipper or add fake events.
+
+## Day 19
+- Session Manager replaces SSH: Windows plugin verified (Authenticode: Amazon Web Services, Inc.); box Online in SSM (agent preinstalled, AmazonSSMManagedInstanceCore since Day 1).
+- Port forwarding over SSM straight to Service ClusterIPs (ArgoCD 8080, Grafana 3000): no kubectl port-forward, no MobaSSHTunnel.
+- Session preferences in Terraform (SSM-SessionManagerRunShell): every session's input/output streamed to /secureshop/dev/ssm-sessions (append-only role), runs as ubuntu with a login shell, 20-min idle timeout. Verified: log shows userIdentity user/lab-admins, runAsUser ubuntu, every command and output.
+- Port 22 closed (SG now 80/443 only; Test-NetConnection 22 = False, 443 = True); my_ip_cidr and terraform.tfvars removed - the daily IP routine is gone (hostname PR remains). CloudTrail StartSession events all attributed to lab-admins.
+- Kept key_name until the next rebuild (changing it replaces the instance); on the runbook.
