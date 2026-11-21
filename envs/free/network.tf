@@ -1,7 +1,7 @@
 module "vpc" {
   #checkov:skip=CKV_TF_1:Registry module pinned to an exact version instead of a commit hash
   source  = "terraform-aws-modules/vpc/aws"
-  version = "6.7.3"
+  version = "6.8.0"
 
   name = "secureshop-lite"
   cidr = "10.30.0.0/16"
