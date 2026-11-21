@@ -36,7 +36,7 @@ jobs:
           terraform -chdir=envs/free validate
 
       - name: Checkov (built-in and custom policies)
-        uses: bridgecrewio/checkov-action@c13aafd679d3814a25067d10fcaf98c4f7594931 # v12
+        uses: bridgecrewio/checkov-action@3f0caf0c3aa9f56ade6b49f6e60b63aaeafb75a3 # v12
         with:
           directory: envs/free
           framework: terraform
